@@ -1,3 +1,11 @@
+---
+title: Covid 19 Data Analysis Dashboard
+emoji: 📊
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+pinned: false
+---
 # COVID-19 Data Analysis Dashboard
 
 A complete, production-ready COVID-19 Data Analysis Dashboard project with a Flask backend, interactive charts, machine learning predictions, and a glassmorphism frontend. Developed following a strict M1-M5 Data Science Methodology.
