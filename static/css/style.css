@@ -1,0 +1,263 @@
+:root {
+    --bg-color: #0b0c10;
+    --card-bg: rgba(31, 40, 51, 0.6);
+    --text-color: #c5c6c7;
+    --primary-color: #45a29e;
+    --accent-color: #66fcf1;
+    --danger-color: #f72585;
+    --success-color: #4cc9f0;
+    --warning-color: #fca311;
+}
+
+body.light-theme {
+    --bg-color: #f4f7f6;
+    --card-bg: rgba(255, 255, 255, 0.8);
+    --text-color: #2b2b2b;
+    --primary-color: #3f72af;
+    --accent-color: #112d4e;
+}
+
+html {
+    /* Removed scroll-behavior: smooth due to Safari trackpad scrolling bug with overflow-x */
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Glassmorphism Classes */
+.glass-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.4);
+}
+
+.glass-nav {
+    background: var(--card-bg);
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+}
+
+.glass-footer {
+    background: var(--card-bg);
+    backdrop-filter: blur(15px);
+    border-top: 1px solid rgba(128, 128, 128, 0.2);
+}
+
+/* Typography & Gradients */
+.text-gradient {
+    background: linear-gradient(45deg, var(--accent-color), var(--primary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.btn-gradient {
+    background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+    color: #0b0c10;
+    border: none;
+    font-weight: 600;
+}
+.btn-gradient:hover {
+    background: linear-gradient(45deg, var(--accent-color), var(--primary-color));
+    color: #fff;
+}
+
+/* Particles Background */
+#particles-js {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
+
+/* Hero Section */
+.hero-section {
+    height: 100vh;
+    padding-top: 80px;
+}
+
+/* Loader */
+.loader-container {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: var(--bg-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease;
+}
+
+/* Typing Effect */
+.typing-effect {
+    overflow: hidden;
+    white-space: nowrap;
+    border-right: 2px solid var(--accent-color);
+    animation: typing 2s steps(40, end), blink-caret .75s step-end infinite;
+}
+
+@keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+}
+@keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: var(--accent-color); }
+}
+
+/* Section Titles */
+.section-title {
+    font-weight: 700;
+    border-left: 5px solid var(--accent-color);
+    padding-left: 15px;
+    color: #fff;
+}
+
+body.light-theme .section-title {
+    color: var(--accent-color);
+}
+body.light-theme .text-light {
+    color: var(--text-color) !important;
+}
+
+/* Stat Cards */
+.stat-card h3 {
+    font-weight: bold;
+    margin-top: 10px;
+}
+.border-primary { border-color: var(--primary-color) !important; }
+.text-primary { color: var(--primary-color) !important; }
+
+/* Custom Table Theme */
+.custom-table-theme {
+    --bs-table-bg: transparent;
+    --bs-table-color: var(--text-color);
+    --bs-table-border-color: rgba(255, 255, 255, 0.1);
+    --bs-table-hover-bg: rgba(69, 162, 158, 0.1);
+    --bs-table-hover-color: var(--text-color);
+}
+
+body.light-theme .custom-table-theme {
+    --bs-table-border-color: rgba(0, 0, 0, 0.1);
+    --bs-table-hover-bg: rgba(63, 114, 175, 0.1);
+}
+
+.custom-table-theme thead th {
+    background-color: var(--primary-color) !important;
+    color: #fff !important;
+    border-bottom: 2px solid var(--accent-color) !important;
+}
+
+/* DataTables pagination and text elements */
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter,
+.dataTables_wrapper .dataTables_length label,
+.dataTables_wrapper .dataTables_filter label {
+    color: var(--text-color) !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    color: var(--text-color) !important;
+}
+
+/* Back to top */
+.back-to-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 40px;
+    height: 40px;
+    background: var(--accent-color);
+    color: #0b0c10;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+.back-to-top.visible {
+    opacity: 1;
+}
+.back-to-top:hover {
+    background: var(--primary-color);
+    color: #fff;
+}
+
+/* Custom Theme for Select Dropdown */
+.custom-select-theme {
+    background-color: var(--bg-color) !important;
+    color: var(--text-color) !important;
+}
+.custom-select-theme option {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+/* Fix for navbar and footer text/icons in light theme */
+body.light-theme .navbar-dark .navbar-nav .nav-link,
+body.light-theme .navbar-dark .navbar-brand {
+    color: var(--text-color) !important;
+}
+
+body.light-theme .navbar-dark .navbar-toggler-icon {
+    filter: invert(1);
+}
+
+body.light-theme .btn-outline-light {
+    color: var(--text-color);
+    border-color: var(--text-color);
+}
+
+body.light-theme .btn-outline-light:hover {
+    background-color: var(--text-color);
+    color: var(--bg-color);
+}
+
+/* Ticker Animation */
+.ticker-wrap {
+    overflow: hidden;
+    height: 30px;
+    line-height: 30px;
+    white-space: nowrap;
+}
+.ticker-move {
+    display: inline-block;
+    white-space: nowrap;
+    padding-left: 100%;
+    animation: ticker 25s linear infinite;
+}
+.ticker-move:hover {
+    animation-play-state: paused;
+}
+@keyframes ticker {
+    0% { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(-100%, 0, 0); }
+}
+
+/* Tooltips */
+.tooltip-inner {
+    background-color: var(--primary-color);
+    color: #fff;
+    border: 1px solid var(--accent-color);
+}
+.bs-tooltip-auto[data-popper-placement^=top] .tooltip-arrow::before, .bs-tooltip-top .tooltip-arrow::before {
+    border-top-color: var(--primary-color);
+}

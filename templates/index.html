@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COVID-19 Data Analysis Dashboard</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- AOS Animation CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=2">
+    <!-- Plotly Full Build -->
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <!-- Google Charts Loader -->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+<body class="dark-theme">
+
+    <div id="particles-js"></div>
+
+    <!-- Preloader -->
+    <div id="loader" class="loader-container">
+        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <h4 class="mt-3 text-white typing-effect">Initializing Dashboard...</h4>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top glass-nav">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class="fa-solid fa-virus-covid text-danger"></i> COVID-19 Analytics</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#m1-data">M1: Data Cleaning</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#m2-eda">M2: EDA</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#m3-probability">M3: Probability</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#m4-inference">M4: Inference</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#m5-regression">M5: Regression</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#data-table">Data Table</a></li>
+                    <li class="nav-item ms-3">
+                        <a href="report.pdf" download class="btn btn-primary btn-sm mt-1" title="Download Report"><i class="fa-solid fa-download"></i> Report</a>
+                    </li>
+                    <li class="nav-item ms-2">
+                        <button id="theme-toggle" class="btn btn-outline-light btn-sm mt-1" title="Toggle Theme"><i class="fa-solid fa-moon"></i></button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero-section text-center d-flex align-items-center justify-content-center flex-column" data-aos="fade-up">
+        <h1 class="display-3 fw-bold text-gradient">COVID-19 Data Analysis</h1>
+        <p class="lead mt-3 w-50">A fully responsive, interactive AI/Data Science dashboard for visualizing global pandemic data using Machine Learning and advanced charting.</p>
+        <div class="mt-4">
+            <a href="#overview" class="btn btn-gradient btn-lg rounded-pill px-5 me-2 shadow-lg">Explore Dashboard <i class="fa-solid fa-arrow-down ms-2"></i></a>
+        </div>
+        <div class="mt-5 clock-widget glass-card p-3 rounded-pill">
+            <span id="live-clock" class="fw-bold fs-5"></span>
+        </div>
+    </header>
+
+    <div class="container main-content mt-4">
+        
+        <!-- AI Smart Insights Ticker -->
+        <div class="row mb-5" data-aos="fade-up">
+            <div class="col-12">
+                <div class="glass-card d-flex align-items-center p-2 rounded-pill overflow-hidden border-info">
+                    <div class="bg-info text-dark fw-bold px-3 py-1 rounded-pill me-3 text-nowrap">
+                        <i class="fa-solid fa-bolt"></i> Smart Insights
+                    </div>
+                    <div class="ticker-wrap w-100 position-relative overflow-hidden">
+                        <div class="ticker-move d-inline-block text-nowrap" id="insights-ticker">
+                            <!-- Insights will be injected here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- M1: Data Cleaning -->
+        <section id="m1-data" class="mb-5 pt-5">
+            <h3 class="section-title mb-4">M1: Data Preprocessing & Cleaning</h3>
+            <p class="mb-4">Before analyzing data, we must clean it to ensure accuracy. Real-world data is often messy, containing errors or gaps. Here is how our automated pipeline prepares the raw Johns Hopkins dataset:</p>
+            
+            <div class="row g-4 text-center">
+                <div class="col-md-4" data-aos="fade-up">
+                    <div class="glass-card p-4 h-100">
+                        <i class="fa-solid fa-eraser fa-2x text-warning mb-3"></i>
+                        <h5>Missing Values</h5>
+                        <p class="small">Days where countries failed to report cases result in missing values (NaN). We resolve this using mathematical interpolation and <code class="text-warning">.fillna(0)</code> to ensure continuous time-series data without gaps.</p>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="glass-card p-4 h-100">
+                        <i class="fa-solid fa-copy fa-2x text-info mb-3"></i>
+                        <h5>Duplicate Values</h5>
+                        <p class="small">Some countries report data by province, resulting in overlapping rows. We aggregate and merge these using <code class="text-info">.groupby()</code> to guarantee exactly one clean row per country per day.</p>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="glass-card p-4 h-100">
+                        <i class="fa-solid fa-chart-line fa-2x text-danger mb-3"></i>
+                        <h5>Outlier Detection</h5>
+                        <p class="small">Sudden massive negative cases often appear due to historical data corrections by governments. We bound our data and clip negative daily spikes to prevent them from skewing our statistical models.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Overview Cards -->
+        <section id="overview" class="mb-5 pt-5">
+            <h3 class="section-title mb-4" data-aos="fade-right">Global Overview <span id="last-updated" class="fs-6 ms-3"></span></h3>
+            <div class="row g-4 align-items-stretch">
+                <div class="col-md-4 col-lg-2" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="glass-card stat-card h-100 text-center text-primary border-primary position-relative overflow-hidden pb-4">
+                        <i class="fa-solid fa-hospital-user fs-1 mb-2"></i>
+                        <h5>Confirmed</h5>
+                        <h3 id="stat-confirmed" class="counter">0</h3>
+                        <div class="position-absolute bottom-0 start-0 w-100" style="height: 40px;"><canvas id="sparkline-confirmed"></canvas></div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-2" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="glass-card stat-card h-100 text-center text-danger border-danger position-relative overflow-hidden pb-4">
+                        <i class="fa-solid fa-skull-crossbones fs-1 mb-2"></i>
+                        <h5>Deaths</h5>
+                        <h3 id="stat-deaths" class="counter">0</h3>
+                        <div class="position-absolute bottom-0 start-0 w-100" style="height: 40px;"><canvas id="sparkline-deaths"></canvas></div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-2" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="glass-card stat-card h-100 text-center text-success border-success position-relative overflow-hidden pb-4">
+                        <i class="fa-solid fa-heart-pulse fs-1 mb-2"></i>
+                        <h5>Recovered</h5>
+                        <h3 id="stat-recovered" class="counter">0</h3>
+                        <div class="position-absolute bottom-0 start-0 w-100" style="height: 40px;"><canvas id="sparkline-recovered"></canvas></div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-2" data-aos="zoom-in" data-aos-delay="400">
+                    <div class="glass-card stat-card h-100 text-center text-warning border-warning position-relative overflow-hidden pb-4">
+                        <i class="fa-solid fa-bed-pulse fs-1 mb-2"></i>
+                        <h5>Active</h5>
+                        <h3 id="stat-active" class="counter">0</h3>
+                        <div class="position-absolute bottom-0 start-0 w-100" style="height: 40px;"><canvas id="sparkline-active"></canvas></div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-2" data-aos="zoom-in" data-aos-delay="500">
+                    <div class="glass-card stat-card h-100 text-center text-info border-info pb-4 d-flex flex-column justify-content-center">
+                        <i class="fa-solid fa-shield-virus fs-1 mb-2"></i>
+                        <h5>Recovery %</h5>
+                        <h3><span id="stat-rec-rate" class="counter">0</span>%</h3>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-2" data-aos="zoom-in" data-aos-delay="600">
+                    <div class="glass-card stat-card h-100 text-center text-secondary border-secondary pb-4 d-flex flex-column justify-content-center">
+                        <i class="fa-solid fa-viruses fs-1 mb-2"></i>
+                        <h5>Mortality %</h5>
+                        <h3><span id="stat-mor-rate" class="counter">0</span>%</h3>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Choropleth Map -->
+            <div class="row mt-4" data-aos="fade-up">
+                <div class="col-12">
+                    <div class="glass-card p-3 position-relative">
+                        <h5 class="card-title mb-3"><i class="fa-solid fa-earth-americas text-primary"></i> Global Interactive Map</h5>
+                        <div id="worldMapChart" style="width: 100%; height: 500px;"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- M2: Exploratory Data Analysis (EDA) -->
+        <section id="m2-eda" class="mb-5 pt-5">
+            <h3 class="section-title mb-4">M2: Exploratory Data Analysis (EDA)</h3>
+            <p class="mb-4">Exploratory Data Analysis helps us discover patterns, spot anomalies, and check our assumptions visually. Below are the key characteristics and trends of the global pandemic.</p>
+            
+            <!-- Descriptive Stats moved to M2 -->
+            <div class="row mb-4" data-aos="fade-up">
+                <div class="col-12">
+                    <div class="glass-card p-4">
+                        <h4 class="text-primary mb-3"><i class="fa-solid fa-calculator"></i> Descriptive Statistics & Regression</h4>
+                        <p class="small">These fundamental statistical metrics give us a numerical summary for different categories of global COVID-19 data.</p>
+                        <div class="row mt-3" id="descriptive-stats-container">
+                            <!-- Dynamic stats cards will be injected here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4 mb-4">
+                <div class="col-lg-8" data-aos="fade-up">
+                    <div class="glass-card p-3 h-100">
+                        <h5 class="card-title"><i class="fa-solid fa-chart-line text-primary"></i> COVID-19 Trend Over Time (Line Chart)</h5>
+                        <canvas id="globalTrendChart" height="100"></canvas>
+                    </div>
+                </div>
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="glass-card p-3 h-100">
+                        <h5 class="card-title"><i class="fa-solid fa-chart-pie text-warning"></i> Cases by Status (Pie Chart)</h5>
+                        <canvas id="distributionPieChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4 mb-4">
+                <div class="col-lg-6" data-aos="fade-up">
+                    <div class="glass-card p-3 h-100">
+                        <h5 class="card-title"><i class="fa-solid fa-chart-bar text-success"></i> Most Affected Countries (Bar chart)</h5>
+                        <canvas id="topCountriesBarChart"></canvas>
+                    </div>
+                </div>
+                <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
+                    <div class="glass-card p-3 h-100">
+                        <h5 class="card-title"><i class="fa-solid fa-earth-americas text-info"></i> Region-wise & Area Spread (Plotly)</h5>
+                        <div id="plotlyAreaChart" style="width:100%;height:300px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-4" data-aos="fade-up">
+                    <div class="glass-card p-3 h-100">
+                        <h5 class="card-title"><i class="fa-solid fa-braille text-danger"></i> Deaths vs Recovered (Scatter)</h5>
+                        <canvas id="scatterChart"></canvas>
+                    </div>
+                </div>
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="glass-card p-3 h-100">
+                        <h5 class="card-title"><i class="fa-solid fa-grip text-primary"></i> Correlation Heatmap (Relationship among variables)</h5>
+                        <div id="heatmapChart" style="width:100%;height:300px;"></div>
+                    </div>
+                </div>
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="glass-card p-3 h-100">
+                        <h5 class="card-title"><i class="fa-solid fa-chart-simple text-secondary"></i> Daily Cases Frequency (Histogram)</h5>
+                        <canvas id="histogramChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Country Analysis -->
+        <section id="country-analysis" class="mb-5 pt-5">
+            <h2 class="section-title mb-4" data-aos="fade-right">Country Analysis</h2>
+            <div class="glass-card p-4" data-aos="zoom-in">
+                <div class="row align-items-center mb-4">
+                    <div class="col-md-4">
+                        <label class="form-label text-light">Select a Country:</label>
+                        <select id="country-select" class="form-select border-secondary custom-select-theme">
+                            <option value="">Loading...</option>
+                        </select>
+                    </div>
+                    <div class="col-md-8 text-end">
+                        <h3 id="c-name" class="text-gradient">Select Country</h3>
+                    </div>
+                </div>
+                
+                <div class="row g-3 mb-4 text-center">
+                    <div class="col-md-3"><div class="p-3 border rounded border-primary">Confirmed: <h4 id="c-conf" class="text-primary">0</h4></div></div>
+                    <div class="col-md-3"><div class="p-3 border rounded border-danger">Deaths: <h4 id="c-death" class="text-danger">0</h4></div></div>
+                    <div class="col-md-3"><div class="p-3 border rounded border-success">Recovered: <h4 id="c-rec" class="text-success">0</h4></div></div>
+                    <div class="col-md-3"><div class="p-3 border rounded border-info">Active: <h4 id="c-act" class="text-info">0</h4></div></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <canvas id="countryTrendChart" height="80"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- M3: Probability Analysis -->
+        <section id="m3-probability" class="mb-5 pt-5">
+            <h3 class="section-title mb-4">M3: Probability Analysis</h3>
+            <p class="mb-4">Probability Analysis helps us quantify risk and uncertainty. By analyzing millions of past historical outcomes, we can calculate the empirical probability of survival versus mortality if someone contracts the virus.</p>
+            <div class="row g-4">
+                <div class="glass-card p-4 h-100" data-aos="fade-up">
+                    <h4 class="mb-4"><i class="fa-solid fa-dice text-warning"></i> Probabilistic Metrics</h4>
+                    <div class="row text-center">
+                        <div class="col-md-6">
+                            <div class="p-4 border rounded border-danger">
+                                <h5 class="text-danger">Probability of Death (Given Infection)</h5>
+                                <h2 id="prob-death-m3" class="fw-bold">0%</h2>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-4 border rounded border-success">
+                                <h5 class="text-success">Probability of Recovery</h5>
+                                <h2 id="prob-rec-m3" class="fw-bold">0%</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Statistical Summary & Inference (M4) -->
+        <section id="m4-inference" class="mb-5 pt-5">
+            <h3 class="section-title mb-4">M4: Statistical Inference</h3>
+            <p class="mb-4">While Descriptive Statistics (shown in M2) describe our specific dataset, Statistical Inference allows us to draw scientific conclusions about the broader population. We use rigorous mathematical tests (T-Test, ANOVA) to prove whether observed trends are statistically significant or just random chance.</p>
+            <div class="row g-4">
+                
+                <!-- T-Test -->
+                <div class="col-md-4" data-aos="zoom-in">
+                    <div class="glass-card p-4 h-100">
+                        <h4 class="mb-3"><i class="fa-solid fa-flask text-primary"></i> Hypothesis Testing (T-Test)</h4>
+                        <p class="small">Comparing average daily cases between the first and second half of the pandemic.</p>
+                        <hr>
+                        <h6><span data-bs-toggle="tooltip" title="A ratio that measures the difference between the two groups relative to the variation within them.">T-Statistic</span>: <span id="inf-tstat" class="text-info float-end">0</span></h6>
+                        <h6><span data-bs-toggle="tooltip" title="Probability that the observed difference happened by chance. Less than 0.05 is statistically significant.">P-Value</span>: <span id="inf-tpval" class="text-warning float-end">0</span></h6>
+                        <p class="text-success mt-3 small"><i class="fa-solid fa-circle-check"></i> Statistically Significant</p>
+                    </div>
+                </div>
+
+                <!-- Confidence Interval -->
+                <div class="col-md-4" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="glass-card p-4 h-100">
+                        <h4 class="mb-3"><i class="fa-solid fa-chart-area text-primary"></i> Confidence Interval (95%)</h4>
+                        <p class="small">Estimating the true global mean of daily new cases with 95% certainty.</p>
+                        <hr>
+                        <h6>Lower Bound: <span id="inf-ci-low" class="text-success float-end">0</span></h6>
+                        <h6>Upper Bound: <span id="inf-ci-up" class="text-danger float-end">0</span></h6>
+                        <p class="mt-3 small"><i class="fa-solid fa-bullseye"></i> 95% confidence interval</p>
+                    </div>
+                </div>
+
+                <!-- ANOVA -->
+                <div class="col-md-4" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="glass-card p-4 h-100">
+                        <h4 class="mb-3"><i class="fa-solid fa-layer-group text-primary"></i> ANOVA Test</h4>
+                        <p class="small">Comparing daily case variance across top 3 countries: <span id="inf-anova-countries" class="text-light"></span></p>
+                        <hr>
+                        <h6><span data-bs-toggle="tooltip" title="Analysis of Variance: Compares the means of three or more groups to see if they are significantly different.">F-Statistic</span>: <span id="inf-fstat" class="text-info float-end">0</span></h6>
+                        <h6><span data-bs-toggle="tooltip" title="Probability that the observed difference happened by chance. Less than 0.05 is statistically significant.">P-Value</span>: <span id="inf-apval" class="text-warning float-end">0</span></h6>
+                        <p class="text-success mt-3 small"><i class="fa-solid fa-circle-check"></i> Significant Difference Found</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+        
+        <!-- M5: Regression Analysis -->
+        <section id="m5-regression" class="mb-5 pt-5">
+            <h3 class="section-title mb-4">M5: Regression Analysis (Machine Learning)</h3>
+            <p class="mb-4">Regression Analysis is a powerful Machine Learning technique used to predict future continuous outcomes based on past historical trends. Here, our model learns from the entire pandemic timeline to forecast the next 30 days of global case growth.</p>
+            <div class="row g-4">
+                <div class="col-lg-3" data-aos="fade-right">
+                    <div class="glass-card p-4 h-100 d-flex flex-column justify-content-center">
+                        <h4 class="mb-4">Step-by-Step Details</h4>
+                        <ul class="list-group list-group-flush bg-transparent mb-3">
+                            <li class="list-group-item bg-transparent text-light border-secondary"><strong>1. Features (X):</strong> Days since pandemic start</li>
+                            <li class="list-group-item bg-transparent text-light border-secondary"><strong>2. Target Variable (y):</strong> Global Confirmed Cases</li>
+                        </ul>
+                        <div class="mb-4">
+                            <span data-bs-toggle="tooltip" title="R-Squared: Indicates how well the regression line fits the data (1.00 is a perfect fit).">Model R² Score:</span>
+                            <h2 id="r2-score" class="text-success counter-float">0.00</h2>
+                        </div>
+                        <p class="small">The model is trained on the historical timeline of global confirmed cases to predict the trend for the next 30 days.</p>
+                        <div class="alert alert-warning p-2 small mt-auto">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Note: Pandemic growth is typically exponential. Linear Regression provides a simplified baseline trend.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-9" data-aos="fade-left">
+                    <div class="glass-card p-3">
+                        <h5 class="card-title">Actual vs Predicted & 30-Day Forecast</h5>
+                        <canvas id="predictionChart" height="120"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Data Table -->
+        <section id="data-table" class="mb-5 pt-5">
+            <h2 class="section-title mb-4" data-aos="fade-right">Country-Wise Data Table</h2>
+            <div class="glass-card p-4" data-aos="fade-up">
+                <div class="table-responsive">
+                    <table id="covidTable" class="table table-hover table-bordered w-100 custom-table-theme">
+                        <thead>
+                            <tr>
+                                <th>Country</th>
+                                <th>Confirmed</th>
+                                <th>Deaths</th>
+                                <th>Recovered</th>
+                                <th>Active</th>
+                                <th>Recovery Rate (%)</th>
+                                <th>Mortality Rate (%)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Data injected via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        
+        <!-- COVID Safety Tips -->
+        <section id="safety-tips" class="mb-5 pt-5">
+            <h3 class="section-title mb-4">COVID-19 Safety Guidelines</h3>
+            <div class="row g-4 text-center">
+                <div class="col-md-3" data-aos="zoom-in" data-aos-delay="0">
+                    <div class="glass-card p-4 h-100">
+                        <i class="fa-solid fa-hands-bubbles fa-3x text-info mb-3"></i>
+                        <h5>Wash Hands</h5>
+                        <p class="small">Wash your hands regularly with soap and water or use alcohol-based sanitizer.</p>
+                    </div>
+                </div>
+                <div class="col-md-3" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="glass-card p-4 h-100">
+                        <i class="fa-solid fa-mask-face fa-3x text-success mb-3"></i>
+                        <h5>Wear a Mask</h5>
+                        <p class="small">Wear a fitted mask in crowded indoor spaces to protect yourself and others.</p>
+                    </div>
+                </div>
+                <div class="col-md-3" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="glass-card p-4 h-100">
+                        <i class="fa-solid fa-people-arrows fa-3x text-warning mb-3"></i>
+                        <h5>Social Distancing</h5>
+                        <p class="small">Maintain a safe distance from others, especially if they are coughing or sneezing.</p>
+                    </div>
+                </div>
+                <div class="col-md-3" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="glass-card p-4 h-100">
+                        <i class="fa-solid fa-syringe fa-3x text-danger mb-3"></i>
+                        <h5>Get Vaccinated</h5>
+                        <p class="small">Stay up to date with your COVID-19 vaccines and booster shots.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="glass-footer text-center py-4 mt-5">
+        <div class="container">
+            <h5 class="text-gradient mb-3">COVID-19 Data Analysis Dashboard</h5>
+            <p class="text-light opacity-75 small">Created for College Submission & Portfolio Project</p>
+            <div class="mt-3">
+                <a href="#" class="btn btn-outline-light btn-sm rounded-circle mx-1"><i class="fa-brands fa-github"></i></a>
+                <a href="#" class="btn btn-outline-light btn-sm rounded-circle mx-1"><i class="fa-brands fa-linkedin"></i></a>
+                <a href="#" class="btn btn-outline-light btn-sm rounded-circle mx-1"><i class="fa-solid fa-envelope"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to top -->
+    <a href="#" class="back-to-top shadow-lg"><i class="fa-solid fa-arrow-up"></i></a>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/app.js') }}?v=5"></script>
+</body>
+</html>
