@@ -91,10 +91,29 @@ let globalTrendChart, topCountriesBarChart, distributionPieChart, scatterChart, 
 // Data Fetching and Rendering
 async function loadDashboardData() {
     try {
-        // 1. Load Summary
-        const resSummary = await fetch('/api/summary');
+        // Fetch all data concurrently to reduce load time
+        const [
+            resSummary, resGlobal, resCountries, 
+            resTable, resPredict, resStats, resInsights
+        ] = await Promise.all([
+            fetch('/api/summary'),
+            fetch('/api/charts/global'),
+            fetch('/api/countries'),
+            fetch('/api/table'),
+            fetch('/api/predict'),
+            fetch('/api/stats'),
+            fetch('/api/insights')
+        ]);
+
         const summary = await resSummary.json();
+        const globalCharts = await resGlobal.json();
+        const countriesData = await resCountries.json();
+        const tableData = await resTable.json();
+        const predictData = await resPredict.json();
+        const statsData = await resStats.json();
+        const insightsData = await resInsights.json();
         
+        // 1. Load Summary
         document.getElementById('last-updated').innerText = `(Last Updated: ${summary.last_updated})`;
         animateCounter('stat-confirmed', 0, summary.total_confirmed, 1500);
         animateCounter('stat-deaths', 0, summary.total_deaths, 1500);
@@ -105,35 +124,23 @@ async function loadDashboardData() {
         document.getElementById('stat-mor-rate').innerText = summary.mortality_rate;
 
         // 2. Load Global Charts
-        const resGlobal = await fetch('/api/charts/global');
-        const globalCharts = await resGlobal.json();
         renderGlobalCharts(globalCharts);
 
         // 3. Load Countries for Dropdown and Bar Chart
-        const resCountries = await fetch('/api/countries');
-        const countriesData = await resCountries.json();
         renderTopCountriesBar(countriesData);
         populateDropdown(countriesData.all_countries);
 
         // 4. Load Data Table & Map
-        const resTable = await fetch('/api/table');
-        const tableData = await resTable.json();
         renderDataTable(tableData);
         renderChoroplethMap(tableData);
 
         // 5. Load ML Predictions
-        const resPredict = await fetch('/api/predict');
-        const predictData = await resPredict.json();
         renderPredictionChart(predictData);
 
         // 6. Load Statistics
-        const resStats = await fetch('/api/stats');
-        const statsData = await resStats.json();
         renderStatistics(statsData, summary);
         
         // 7. Load Smart Insights
-        const resInsights = await fetch('/api/insights');
-        const insightsData = await resInsights.json();
         renderInsights(insightsData.insights);
 
         // Initialize tooltips
