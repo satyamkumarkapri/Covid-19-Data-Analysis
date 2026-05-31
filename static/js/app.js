@@ -199,42 +199,6 @@ function renderGlobalCharts(data) {
         },
         options: { responsive: true }
     });
-
-    // Render Sparklines
-    renderSparklines(data);
-}
-
-function renderSparklines(data) {
-    const last30 = 30;
-    const dates = data.dates.slice(-last30);
-    const active = data.confirmed.map((c, i) => c - data.deaths[i] - data.recovered[i]);
-    
-    const createSparkline = (id, color, series) => {
-        const ctx = document.getElementById(id).getContext('2d');
-        const dataSlice = series.slice(-last30);
-        const minVal = Math.min(...dataSlice);
-        const maxVal = Math.max(...dataSlice);
-        
-        new Chart(ctx, {
-            type: 'line',
-            data: { labels: dates, datasets: [{ data: dataSlice, borderColor: color, borderWidth: 2, tension: 0.3, fill: false }] },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { display: false }, tooltip: { enabled: false } },
-                scales: { 
-                    x: { display: false }, 
-                    y: { display: false, min: minVal - (maxVal - minVal) * 0.1, max: maxVal + (maxVal - minVal) * 0.1 } 
-                },
-                elements: { point: { radius: 0 } },
-                layout: { padding: 0 }
-            }
-        });
-    };
-
-    createSparkline('sparkline-confirmed', '#45a29e', data.confirmed);
-    createSparkline('sparkline-deaths', '#f72585', data.deaths);
-    createSparkline('sparkline-recovered', '#4cc9f0', data.recovered);
-    createSparkline('sparkline-active', '#fca311', active);
 }
 
 function renderInsights(insights) {
