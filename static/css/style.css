@@ -103,21 +103,75 @@ body {
     transition: opacity 0.5s ease;
 }
 
-/* Typing Effect */
-.typing-effect {
-    overflow: hidden;
-    white-space: nowrap;
-    border-right: 2px solid var(--accent-color);
-    animation: typing 2s steps(40, end), blink-caret .75s step-end infinite;
+/* Modern Animated Spinner */
+.modern-spinner {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-@keyframes typing {
-    from { width: 0 }
-    to { width: 100% }
+.spinner-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 4px solid transparent;
 }
-@keyframes blink-caret {
-    from, to { border-color: transparent }
-    50% { border-color: var(--accent-color); }
+
+.spinner-ring:nth-child(1) {
+    border-top: 4px solid var(--primary-color);
+    border-right: 4px solid var(--accent-color);
+    animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+.spinner-ring:nth-child(2) {
+    width: 70%;
+    height: 70%;
+    border-bottom: 4px solid var(--danger-color);
+    border-left: 4px solid var(--warning-color);
+    animation: spin-reverse 1s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+.spinner-dot {
+    width: 12px;
+    height: 12px;
+    background: var(--success-color);
+    border-radius: 50%;
+    animation: pulse 1s infinite alternate;
+    box-shadow: 0 0 15px var(--success-color);
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes spin-reverse {
+    0% { transform: rotate(360deg); }
+    100% { transform: rotate(0deg); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(0.8); opacity: 0.5; }
+    100% { transform: scale(1.2); opacity: 1; }
+}
+
+/* Pulsing Text Effect */
+.loading-text {
+    font-weight: 600;
+    letter-spacing: 2px;
+    background: linear-gradient(45deg, var(--accent-color), var(--primary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: pulse-text 1.5s infinite alternate;
+}
+
+@keyframes pulse-text {
+    0% { opacity: 0.6; }
+    100% { opacity: 1; filter: drop-shadow(0 0 5px rgba(102, 252, 241, 0.4)); }
 }
 
 /* Section Titles */
