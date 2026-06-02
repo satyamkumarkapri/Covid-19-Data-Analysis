@@ -306,13 +306,18 @@ function populateDropdown(countries) {
         if(countryTrendChart) countryTrendChart.destroy();
         
         const ctx = document.getElementById('countryTrendChart').getContext('2d');
+        const activeData = data.confirmed.map((conf, index) => conf - data.deaths[index] - data.recovered[index]);
+        
         countryTrendChart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: data.dates,
                 datasets: [
                     { label: 'Confirmed', data: data.confirmed, borderColor: '#45a29e', fill: false },
-                    { label: 'Daily New', data: data.daily_confirmed, borderColor: '#fca311', type: 'bar' }
+                    { label: 'Active', data: activeData, borderColor: '#fca311', fill: false },
+                    { label: 'Recovered', data: data.recovered, borderColor: '#4cc9f0', fill: false },
+                    { label: 'Deaths', data: data.deaths, borderColor: '#f72585', fill: false },
+                    { label: 'Daily New', data: data.daily_confirmed, borderColor: '#6c757d', type: 'bar' }
                 ]
             },
             options: { responsive: true, interaction: { mode: 'index', intersect: false } }
