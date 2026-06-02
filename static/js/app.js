@@ -327,6 +327,8 @@ function populateDropdown(countries) {
 
 function renderPredictionChart(data) {
     document.getElementById('r2-score').innerText = data.r2_score;
+    if (data.mae !== undefined) document.getElementById('mae-score').innerText = data.mae.toLocaleString();
+    if (data.rmse !== undefined) document.getElementById('rmse-score').innerText = data.rmse.toLocaleString();
 
     const ctx = document.getElementById('predictionChart').getContext('2d');
     new Chart(ctx, {
@@ -339,7 +341,7 @@ function renderPredictionChart(data) {
                 { label: '30-Day Forecast', data: [...Array(data.actual_cases.length-1).fill(null), data.actual_cases[data.actual_cases.length-1], ...data.future_cases.flat()], borderColor: '#f72585', fill: false, pointRadius: 2 }
             ]
         },
-        options: { responsive: true, interaction: { mode: 'index', intersect: false } }
+        options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false } }
     });
 }
 
@@ -393,7 +395,7 @@ function renderStatistics(data, summary) {
             const stats = data.descriptive[category];
             cardsHtml += `
                 <div class="col-lg-3 col-md-6 mb-4">
-                    <div class="p-3 border rounded border-secondary h-100 bg-transparent text-center text-light">
+                    <div class="p-3 border rounded border-secondary h-100 bg-transparent text-center text-light d-flex flex-column">
                         <h5 class="text-light fw-bold mb-4">${category}</h5>
                         
                         <div class="row small mb-3 text-start">
@@ -416,7 +418,7 @@ function renderStatistics(data, summary) {
                             <div class="col-6 text-break"><span class="text-secondary fw-bold">Q3:</span><br/>${stats.q3.toLocaleString()}</div>
                         </div>
                         
-                        <div class="mt-3 p-2 border rounded ${stats.outliers_count > 0 ? 'border-danger text-danger' : 'border-secondary text-secondary'} text-center text-break">
+                        <div class="mt-auto p-2 border rounded ${stats.outliers_count > 0 ? 'border-danger text-danger' : 'border-secondary text-secondary'} text-center text-break">
                             <span class="fw-bold">Outliers:</span> ${stats.outliers_count} found
                             ${stats.outliers_count > 0 ? `<br/><small>Values: ${stats.outliers_values}</small>` : ''}
                         </div>

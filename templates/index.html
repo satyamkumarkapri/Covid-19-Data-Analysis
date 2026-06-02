@@ -47,6 +47,15 @@
                     <li class="nav-item"><a class="nav-link" href="#m3-probability">M3: Probability</a></li>
                     <li class="nav-item"><a class="nav-link" href="#m4-inference">M4: Inference</a></li>
                     <li class="nav-item"><a class="nav-link" href="#m5-regression">M5: Regression</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            More
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark glass-nav" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#results">Results & Discussion</a></li>
+                            <li><a class="dropdown-item" href="#conclusion">Conclusion</a></li>
+                        </ul>
+                    </li>
                     <li class="nav-item"><a class="nav-link" href="#data-table">Data Table</a></li>
                     <li class="nav-item ms-3">
                         <a href="report.pdf" download class="btn btn-primary btn-sm mt-1" title="Download Report"><i class="fa-solid fa-download"></i> Report</a>
@@ -383,9 +392,19 @@
                             <li class="list-group-item bg-transparent text-light border-secondary"><strong>1. Features (X):</strong> Days since pandemic start</li>
                             <li class="list-group-item bg-transparent text-light border-secondary"><strong>2. Target Variable (y):</strong> Global Confirmed Cases</li>
                         </ul>
-                        <div class="mb-4">
+                        <div class="mb-3">
                             <span data-bs-toggle="tooltip" title="R-Squared: Indicates how well the regression line fits the data (1.00 is a perfect fit).">Model R² Score:</span>
                             <h2 id="r2-score" class="text-success counter-float">0.00</h2>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-12 mb-2">
+                                <span data-bs-toggle="tooltip" title="Mean Absolute Error: Average absolute difference between predicted and actual values.">MAE:</span>
+                                <h4 id="mae-score" class="text-warning text-break">0</h4>
+                            </div>
+                            <div class="col-12">
+                                <span data-bs-toggle="tooltip" title="Root Mean Squared Error: Standard deviation of prediction errors.">RMSE:</span>
+                                <h4 id="rmse-score" class="text-danger text-break">0</h4>
+                            </div>
                         </div>
                         <p class="small">The model is trained on the historical timeline of global confirmed cases to predict the trend for the next 30 days.</p>
                         <div class="alert alert-warning p-2 small mt-auto">
@@ -394,9 +413,11 @@
                     </div>
                 </div>
                 <div class="col-lg-9" data-aos="fade-left">
-                    <div class="glass-card p-3">
+                    <div class="glass-card p-3 h-100 d-flex flex-column">
                         <h5 class="card-title">Actual vs Predicted & 30-Day Forecast</h5>
-                        <canvas id="predictionChart" height="120"></canvas>
+                        <div class="flex-grow-1 position-relative" style="min-height: 250px;">
+                            <canvas id="predictionChart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -462,6 +483,64 @@
             </div>
         </section>
 
+        <!-- Results and Discussion -->
+        <section id="results" class="mb-5 pt-5">
+            <h2 class="section-title mb-4" data-aos="fade-right">Results and Discussion</h2>
+            <div class="row g-4">
+                <div class="col-md-6" data-aos="fade-up">
+                    <div class="glass-card p-4 h-100">
+                        <h4 class="text-primary mb-3"><i class="fa-solid fa-magnifying-glass-chart"></i> Major Observations</h4>
+                        <p>Our exploratory data analysis reveals distinct waves of infection globally. The line charts demonstrate how quickly the virus spread during peak months. The bar charts highlight that certain heavily populated or highly connected countries bore the brunt of the absolute case counts. We also observe a strong correlation between confirmed cases and recoveries.</p>
+                    </div>
+                </div>
+                <div class="col-md-6" data-aos="fade-up" data-aos-delay="100">
+                    <div class="glass-card p-4 h-100">
+                        <h4 class="text-success mb-3"><i class="fa-solid fa-chart-line"></i> Statistical Findings</h4>
+                        <p>Through hypothesis testing (T-Test), we established a statistically significant difference in daily case rates between the first and second halves of the pandemic. Additionally, ANOVA testing confirmed that the variance in case growth among the top three most affected countries is significantly different, indicating different effectiveness in national containment strategies.</p>
+                    </div>
+                </div>
+                <div class="col-md-6" data-aos="fade-up" data-aos-delay="200">
+                    <div class="glass-card p-4 h-100">
+                        <h4 class="text-warning mb-3"><i class="fa-solid fa-laptop-code"></i> Model Performance</h4>
+                        <p>The Linear Regression model provided a simplified baseline for forecasting. While the R² score indicates a reasonable fit for the linear trend, the high MAE and RMSE values reflect the inherent difficulty of predicting exponential, highly volatile pandemic growth using purely linear assumptions. Non-linear models would capture these dynamics better.</p>
+                    </div>
+                </div>
+                <div class="col-md-6" data-aos="fade-up" data-aos-delay="300">
+                    <div class="glass-card p-4 h-100">
+                        <h4 class="text-info mb-3"><i class="fa-solid fa-lightbulb"></i> Recommendations</h4>
+                        <p>Based on our findings, we recommend maintaining robust early-warning systems (as visualized by daily surge tracking) and prioritizing vaccination in regions with lower historical recovery rates. The data also underscores the importance of stringent containment measures to flatten the curve and avoid the massive spikes seen in the first year.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Conclusion -->
+        <section id="conclusion" class="mb-5 pt-5">
+            <h2 class="section-title mb-4" data-aos="fade-right">Conclusion</h2>
+            <div class="glass-card p-5 text-center" data-aos="zoom-in">
+                <i class="fa-solid fa-flag-checkered fa-4x text-success mb-4"></i>
+                <h3 class="mb-4">Project Summary</h3>
+                <p class="lead w-75 mx-auto mb-4">We successfully built an automated, end-to-end data pipeline that ingests raw COVID-19 data, cleans it (M1), and extracts actionable insights through EDA (M2), Probability Analysis (M3), Statistical Inference (M4), and Machine Learning (M5) into a unified Dashboard (M6).</p>
+                <hr class="w-50 mx-auto my-4 border-secondary">
+                <div class="row text-start mt-4">
+                    <div class="col-md-6 border-end border-secondary">
+                        <h5 class="text-primary"><i class="fa-solid fa-key"></i> Key Insights</h5>
+                        <ul class="text-light opacity-75">
+                            <li>Recovery rates remain strong despite initial mortality spikes.</li>
+                            <li>Statistical variance between nations highlights the impact of diverse public health policies.</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6 ps-md-4">
+                        <h5 class="text-danger"><i class="fa-solid fa-bullseye"></i> Prediction Accuracy</h5>
+                        <ul class="text-light opacity-75">
+                            <li>The baseline regression model captures the macroscopic upward trajectory but fails to model short-term exponential waves accurately.</li>
+                            <li>Future iterations should employ Time-Series models like ARIMA or LSTMs for enhanced predictive accuracy.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </div>
 
     <!-- Footer -->
@@ -470,9 +549,9 @@
             <h5 class="text-gradient mb-3">COVID-19 Data Analysis Dashboard</h5>
             <p class="text-light opacity-75 small">Created for College Submission & Portfolio Project</p>
             <div class="mt-3">
-                <a href="#" class="btn btn-outline-light btn-sm rounded-circle mx-1"><i class="fa-brands fa-github"></i></a>
-                <a href="#" class="btn btn-outline-light btn-sm rounded-circle mx-1"><i class="fa-brands fa-linkedin"></i></a>
-                <a href="#" class="btn btn-outline-light btn-sm rounded-circle mx-1"><i class="fa-solid fa-envelope"></i></a>
+                <a href="https://github.com/satyamkumarkapri" target="_blank" class="btn btn-outline-light btn-sm rounded-circle mx-1" title="GitHub"><i class="fa-brands fa-github"></i></a>
+                <a href="https://www.linkedin.com/in/satyamkumarkapri" target="_blank" class="btn btn-outline-light btn-sm rounded-circle mx-1" title="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+                <a href="mailto:satyamkumarkapri17@gmail.com" class="btn btn-outline-light btn-sm rounded-circle mx-1" title="Email"><i class="fa-solid fa-envelope"></i></a>
             </div>
         </div>
     </footer>

@@ -157,10 +157,12 @@ def predict():
     model = LinearRegression()
     model.fit(X, y)
     
-    # Predict past for R2 calculation
+    # Predict past for R2, MAE, RMSE calculation
     y_pred = model.predict(X)
-    from sklearn.metrics import r2_score, mean_squared_error
+    from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
     r2 = r2_score(y, y_pred)
+    mae = mean_absolute_error(y, y_pred)
+    rmse = np.sqrt(mean_squared_error(y, y_pred))
     
     # Predict next 30 days
     last_day = X['Days'].max()
@@ -177,7 +179,9 @@ def predict():
         'predicted_past': y_pred.tolist(),
         'future_dates': future_dates_str,
         'future_cases': future_preds.tolist(),
-        'r2_score': round(r2, 4)
+        'r2_score': round(r2, 4),
+        'mae': round(mae, 2),
+        'rmse': round(rmse, 2)
     })
 
 @app.route('/api/table')
